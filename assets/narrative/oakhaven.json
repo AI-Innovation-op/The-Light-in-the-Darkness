@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "source": "Guion tecnico, sonido y dialogos de Kevin - 13 noviembre 2026",
+  "dialogues": {
+    "elowen_huerto": [
+      ["Elowen de Oakhaven", "A veces me despierto en mitad de la noche y veo a la Madre Morwenna de pie junto a mi ventana, rezando con el rosario apretado hasta que le sangran los nudillos... Como si esperara que en cualquier momento yo dejara de ser yo, Thomas. Prométeme que, si algún día tienen razón sobre mí, no dejarás que le haga daño a nadie."],
+      ["Elowen de Oakhaven", "Todavía caminas igual que cuando teníamos diez años y te daba pavor cruzar el bosque antes del alba. Siempre buscabas mi mano en la oscuridad... sin darte cuenta de que eras tú quien me quitaba el frío a mí."]
+    ],
+    "shalem_viaje": [
+      ["Shalem", "Escúchame bien, monaguillo: soy Shalem, Gran Marqués de las Brasas Susurrantes, Señor de los Siete Incendios... y NO acepto que me rasques detrás de las orejas. Bueno, quizá un poco en la izquierda, pero si se lo cuentas a alguien te arranco los tendones."]
+    ],
+    "morwenna_intro": [
+      ["Madre Morwenna", "La muchacha pertenece al Cáliz. Apartaos de la pira."],
+      ["Khaterine", "¡Toma prestada mi ceniza, Thomas!"]
+    ],
+    "londinium_arrival": [
+      ["Khaterine", "Londinium. No confundas el brillo de sus puertas con una promesa de refugio. Primero averiguaremos dónde han llevado a Elowen."],
+      ["Shalem", "Tanto oro y ninguna pescadería a la vista. Empiezo a sospechar que esta ciudad tiene sus prioridades gravemente trastornadas."]
+    ]
+  },
+  "boss_titles": {
+    "morwenna": "MADRE MORWENNA, VIGÍA DE LA PIRA SAGRADA",
+    "malphas": "REX MALPHAS, SOBERANO DEL ESPEJISMO",
+    "alaric": "ALARIC EL GENIO, PADRE DE LA SANGRE MORTAL",
+    "crisol": "CRISOL DE LAS DOS CORONAS (MORWENNA & MALPHAS)",
+    "astaroth": "ASTAROTH, PADRE DE LAS CENIZAS Y SOL DEL ABISMO"
+  },
+  "audio_direction": {
+    "oakhaven": "Cantico de Ceniza: coro femenino, cuerdas col legno, madera, grandes piras y viento. Pendiente de producir.",
+    "implemented_placeholder_cues": ["wind", "evade", "parry", "block", "hit", "magic", "swing", "reward", "pickup"],
+    "voice_recordings": false
+  }
+}

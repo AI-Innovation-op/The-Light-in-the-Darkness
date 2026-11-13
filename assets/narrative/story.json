@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "authorship": "Adaptacion narrativa propuesta para la demo. La profecia citada es la version oficial de la Edicion Maestra.",
+  "sequences": {
+    "opening": [
+      {"heading":"I. El narrador del Abismo","speaker":"Shalem · Gran Marqués de las Brasas Susurrantes","body":"Permíteme ilustrarte, ingenuo mortal. Soy Shalem, Gran Marqués de las Brasas Susurrantes... aunque el destino haya tenido el pésimo gusto de concederme este glorioso aspecto de felino negro. Puedes admirarme. En silencio, preferiblemente.","image":"shalem-opening"},
+      {"heading":"II. Las campanas de Albion","speaker":"Shalem","body":"En Albion, la Iglesia del Cáliz Solar decide cuándo rezar, a quién temer y cuánto cuesta salvar tu alma. Un servicio admirablemente completo. La gente de Oakhaven se aferra a sus campanas, mientras algo responde desde el bosque.","image":"shalem-opening"},
+      {"heading":"III. Lo que el pueblo recita","speaker":"Shalem","body":"Así cuentan su profecía: «Cuando los pastores sean revestidos con pieles de lobo y sus sagradas hogueras se alimenten de la fe de la inocencia, de las cenizas del Abismo surgirá el fruto maldito de dos sangres». Ya ves: hasta sus canciones de cuna necesitan una amenaza.","image":"shalem-opening"},
+      {"heading":"IV. Antes de la primera hoguera","speaker":"Shalem","body":"Elowen vive bajo vigilancia. Thomas todavía cree que puede protegerla. Khaterine guarda más silencios que una cripta. Y yo... yo solo pretendía cenar en paz. Ven, mortal. Alguien tendrá que vigilar que estos humanos no se maten antes del desayuno.","image":"shalem-opening"}
+    ],
+    "act1_to_act2": [
+      {"heading":"I. Las brasas que quedan","speaker":"Oakhaven · Después de la pira","body":"Morwenna se retira entre humo y raíces. La hoguera se apaga, pero Elowen sigue lejos de casa. Entre las cenizas queda una orden con el sello de Londinium: el rastro continúa hacia la capital.","image":"oakhaven-aftermath"},
+      {"heading":"II. Un camino entre sombras","speaker":"El camino a la Ciudadela Dorada","body":"Thomas, Khaterine y Shalem abandonan Oakhaven. Atrás quedan las campanas y las preguntas sin respuesta. Delante, una ciudad que promete protección bajo el mismo sol que vigila sus pasos.","image":"road-to-londinium"},
+      {"heading":"III. Oro sobre las tinieblas","speaker":"Acto II · La Ciudadela Dorada de Londinium","body":"Las puertas de Londinium se alzan ante ellos. Thomas aprieta la empuñadura; Khaterine reconoce demasiado en aquel brillo. Shalem observa la ciudad sin apartarse de sus compañeros. El viaje para encontrar a Elowen continúa.","image":"londinium-gates"}
+    ]
+  },
+  "chapters": [
+    {"id":1,"title":"Oakhaven y el Bosque de las Hogueras","milestones":["Escuchar a Elowen","Despejar el sendero","Investigar las hogueras","Partir hacia Londinium"]},
+    {"id":2,"title":"La Ciudadela Dorada de Londinium","milestones":["Llegar a la ciudadela","Por descubrir","Por descubrir","Por descubrir"]},
+    {"id":3,"title":"La Catedral Invertida","milestones":["Por descubrir","Por descubrir","Por descubrir","Por descubrir"]}
+  ]
+}
