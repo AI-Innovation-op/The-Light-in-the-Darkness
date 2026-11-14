@@ -1,5 +1,6 @@
 extends Node2D
 ## Composition root and Godot adventure controller. Domain rules live under src/domain.
+const CatView = preload("res://src/presentation/godot/cat_view.gd")
 const ActorView = preload("res://src/presentation/godot/actor_view.gd")
 const EnemyView = preload("res://src/presentation/godot/enemy_view.gd")
 const VillageView = preload("res://src/presentation/godot/village_view.gd")
@@ -32,6 +33,7 @@ var bursts: Array = []
 var dialogue_lines: Array = []
 var dialogue_index = 0
 var dialogue_done = ""
+var cat_view
 var cat_position = Vector2(100,425)
 var wave = 0
 var wave_wait = -1.0
@@ -61,6 +63,9 @@ func _ready():
         hero.position = Vector2(220 if who=="Thomas" else 165,410 if who=="Thomas" else 425)
         heroes.append(hero)
         add_child(hero)
+    cat_view = CatView.new()
+    cat_view.hide()
+    add_child(cat_view)
     elowen = ActorView.new()
     elowen.kind = "Elowen"
     elowen.position = Vector2(435,363)
@@ -219,6 +224,11 @@ func _physics_process(delta: float):
     companion.guarding = false
     companion.tick(delta,offset.normalized() if offset.length()>12 else Vector2.ZERO)
     cat_position = cat_position.move_toward(hero.position+Vector2(-hero.facing*38,16),delta*150)
+    cat_view.position = cat_position
+    cat_view.z_index = int(cat_position.y)
+    cat_view.facing = hero.facing
+    cat_view.visible = started
+    cat_view.queue_redraw()
     camera.position.x = lerpf(camera.position.x,clampf(hero.position.x,480,1660),minf(1,delta*6))
     camera.position.y = 270
     for enemy in enemies.duplicate():
@@ -554,13 +564,6 @@ func _draw():
             draw_circle(hazard.position,40,Color(0.45,0.65,0.35,0.4))
     if not started:
         return
-    # Shalem's compact silhouette is independent of player gender or selection.
-    draw_circle(cat_position+Vector2(0,-7),10,Color("151b25"))
-    draw_rect(Rect2(cat_position+Vector2(3,-20),Vector2(13,13)),Color("151b25"))
-    draw_colored_polygon(PackedVector2Array([cat_position+Vector2(3,-18),cat_position+Vector2(3,-26),cat_position+Vector2(8,-20)]),Color("151b25"))
-    draw_colored_polygon(PackedVector2Array([cat_position+Vector2(11,-20),cat_position+Vector2(16,-25),cat_position+Vector2(16,-17)]),Color("151b25"))
-    draw_rect(Rect2(cat_position+Vector2(10,-17),Vector2(3,2)),Color("d7b66c"))
-    draw_arc(cat_position+Vector2(-10,-11),9,1,4.7,12,Color("151b25"),4)
     for drop in drops:
         draw_arc(drop.position,21,0,TAU,20,Color("c4ab73"),1)
         draw_line(drop.position+Vector2(-12,-4),drop.position+Vector2(14,-12),Color("d0cfbd"),4)

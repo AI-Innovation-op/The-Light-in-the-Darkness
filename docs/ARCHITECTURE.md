@@ -85,3 +85,7 @@ Hay pruebas de dominio para daño, invulnerabilidad, parry, rotura de guardia, m
 La integración usa un bot determinista y no equivale a una prueba humana de dificultad, controles de mando, interpretación sonora o rendimiento mínimo. Los resultados de ejecución se conservan fuera de las fuentes junto a las exportaciones.
 
 La integración de historia comprueba apertura, diario, prototipo de Morwenna, tres ilustraciones, cambio real a Londinium, persistencia de llegada, reproducción sin alterar el estado y uso de un acceso pendiente de Shalem en el Acto II. Las notas locales de progreso y validación permanecen fuera del repositorio publicado.
+
+## Recursos de personajes
+
+`SpriteCatalog` pertenece a presentación: selecciona poses, mantiene una caché de texturas, recorta márgenes alfa y define alturas y pivotes. `ActorView`, `EnemyView`, `CatView` y la interfaz lo consumen. Las imágenes nunca determinan colisiones, daño ni progresión. Las pruebas de integración comprueban transparencia real, selección al desarmar y el anclaje de los pies. Malphas es un recurso futuro; el catálogo no lo añade a la simulación.

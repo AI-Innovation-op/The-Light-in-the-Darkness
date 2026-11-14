@@ -1,6 +1,6 @@
 # The Light in the Darkness
 
-**Demo narrativa 0.2: Oakhaven y la llegada a Londinium.**
+**Demo narrativa 0.3: personajes ilustrados, Oakhaven y la llegada a Londinium.**
 
 ![Shalem, Gran Marqués de las Brasas Susurrantes](assets/cinematics/shalem-opening.png)
 
@@ -79,9 +79,17 @@ Morwenna no completa el Acto I por sí sola: la llegada guardada a Londinium res
 
 Si falla el guardado de la recompensa, la reclamación se revierte en memoria y se conserva el acceso. La interfaz ofrece reintentar la escritura. En este entorno restringido, el editor emitió `Safe save failed` al guardar su configuración durante importación/exportación; los paquetes se generaron, las pruebas de guardado del juego pasaron y el ejecutable inició sin errores de runtime. No se desactivaron protecciones del equipo.
 
-## Alcance de la versión 0.1
+## Sprites y retratos
 
-Esta entrega es una base funcional de la demo. El arte de combate se dibuja con formas de pixel art provisionales; las animaciones y el audio todavía necesitan producción artística. Los efectos sintetizados no son las voces, coros ni música final del guion. El Recuerdo del Roble es una recompensa de prueba, sin sustituir el catálogo de armas de la biblia. Morwenna es un prototipo para comprobar combate, cierre y transición; todavía no implementa el arma Lamento de Oakhaven.
+Los [13 PNG de personajes](assets/sprites) usan fondo transparente y conservan los nombres solicitados. Thomas alterna reposo, ataque y desarmado; Khaterine alterna reposo y magia. Elowen, Shalem, los acechadores y Morwenna usan sus nuevos sprites. Los retratos aparecen en los diálogos de sus personajes, en las barras de Thomas y Khaterine y en la apertura de Shalem.
+
+Son **poses estáticas**, con inversión horizontal y desplazamiento sencillo al moverse; todavía no son hojas de animación. Malphas tiene su recurso preparado, pero no aparece como enemigo jugable. [Catálogo visual y contrato de los recursos](docs/SPRITES.md).
+
+Se generaron con **image_gen integrado**, usando la lámina de dirección de arte aportada por Kevin. Los [prompts completos](assets/sprites/prompts.json) permiten revisar y repetir la dirección. El catálogo de presentación recorta el margen transparente al cargar, conserva proporciones y ancla cada pose al suelo; las colisiones y reglas permanecen independientes de la imagen.
+
+## Alcance de la demo
+
+Esta entrega es una base funcional de la demo. Los escenarios de combate siguen usando formas provisionales; los personajes tienen poses PNG y las animaciones y el audio todavía necesitan producción artística. Los efectos sintetizados no son las voces, coros ni música final del guion. El Recuerdo del Roble es una recompensa de prueba, sin sustituir el catálogo de armas de la biblia. Morwenna es un prototipo para comprobar combate, cierre y transición; todavía no implementa el arma Lamento de Oakhaven.
 
 Quedan para siguientes entregas Malphas y Astaroth, la campaña completa, las cinco misiones narrativas, el arsenal y sus efectos completos, puzzles y trivia, remates cooperativos, armas enemigas temporales, cooperativo local, mando, rebinding, voces y música final. La demo actual tiene memoria de cuatro parejas, un compañero sencillo y dos personajes controlables por turnos.
 

@@ -2,12 +2,13 @@ import argparse, hashlib, json, shutil, urllib.request, zipfile
 from pathlib import Path
 parser=argparse.ArgumentParser()
 parser.add_argument('--build',type=Path,required=True)
-parser.add_argument('--version',default='0.2')
+parser.add_argument('--version',default='0.3')
 args=parser.parse_args()
 root=Path(__file__).resolve().parents[1]
 build=args.build.resolve()
 # Compiled gameplay source must match the reviewed source before packaging.
-for source in (root/'src').rglob('*.gd'):
+compiled_files = [*(root/'src').rglob('*.gd'),*(root/'assets').rglob('*.png'),*(root/'assets').rglob('*.json'),root/'project.godot',root/'main.tscn']
+for source in compiled_files:
     staged=build/'source'/source.relative_to(root)
     assert staged.read_bytes()==source.read_bytes(),f'Stale compiled source: {source}'
 for name in ['LICENSE.txt','COPYRIGHT.txt']:
@@ -19,7 +20,7 @@ for name in ['LICENSE.txt','COPYRIGHT.txt']:
     shutil.copy2(target,build/'web'/target.name)
 shutil.copy2(root/'README.md',build/'windows/LEEME.md')
 packages=build/'packages'; packages.mkdir(exist_ok=True)
-for label,folder in [('Windows',build/'windows'),('Web',build/'web'),('Fuentes',root)]:
+for label,folder in [('Windows',build/'windows'),('Web',build/'web'),('Fuentes',root),('Sprites',root/'assets/sprites')]:
     output=packages/f'The-Light-in-the-Darkness-v{args.version}-{label}.zip'
     with zipfile.ZipFile(output,'w',zipfile.ZIP_DEFLATED,compresslevel=6) as archive:
         for path in folder.rglob('*'):

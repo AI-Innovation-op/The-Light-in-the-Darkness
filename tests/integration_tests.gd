@@ -2,6 +2,7 @@ extends SceneTree
 var failures: Array = []
 var count = 0
 var game
+const Sprites = preload("res://src/presentation/godot/sprite_catalog.gd")
 
 func _initialize():
     call_deferred("run")
@@ -29,6 +30,27 @@ func run():
     check(game.interface.mode=="title" and game.session.state.flags==opening_flags,"skipping intro returns to title without changing saved story progress")
     game.on_ui_action("start_thomas")
     var hero = game.active()
+    var portraits_fit = true
+    for control in game.interface.hud.get_children():
+        if control is TextureRect:
+            portraits_fit = portraits_fit and control.size.x<=60 and control.size.y<=60
+    check(portraits_fit,"HUD portraits stay inside the compact health header")
+    var art_errors: Array = []
+    for id in Sprites.POSES:
+        var texture: Texture2D = load("res://assets/sprites/%s.png" % id)
+        var image = texture.get_image()
+        if image.detect_alpha()==Image.ALPHA_NONE or image.get_pixel(0,0).a>0 or not image.get_used_rect().has_area():
+            art_errors.append(id)
+    check(art_errors.is_empty(),"all thirteen sprite files have real transparency and visible artwork: "+str(art_errors))
+    check(hero.current_sprite()=="thomas_idle","equipped Thomas starts in the sword idle pose")
+    hero.attack_time = 0.15
+    check(hero.current_sprite()=="thomas_attack","Thomas attack selects the sword action pose")
+    hero.armed = false
+    check(hero.current_sprite()=="thomas_disarmed","disarm takes precedence over an active sword pose")
+    hero.armed = true
+    hero.attack_time = 0
+    check(Sprites.hero_pose("Khaterine",false,true)=="khaterine_idle","disarmed Khaterine never displays the magic attack pose")
+    check(Sprites.foot_rect("thomas_idle").end.y==0 and Sprites.foot_rect("thomas_attack").end.y==0,"different pose heights stay anchored on the same ground plane")
     var start_x = hero.position.x
     Input.action_press("walk_right")
     await frames(18)

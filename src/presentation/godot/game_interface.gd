@@ -21,6 +21,7 @@ var generation = 0
 var rng = RandomNumberGenerator.new()
 const HealthGauge = preload("res://src/presentation/godot/health_gauge.gd")
 const MemoryBoard = preload("res://src/domain/activities/memory_board.gd")
+const Sprites = preload("res://src/presentation/godot/sprite_catalog.gd")
 var board
 const NarrativeScreen = preload("res://src/presentation/godot/narrative_screen.gd")
 var story_screen
@@ -77,13 +78,21 @@ func _ready():
     hud.add_child(top)
     for i in range(2):
         var who = "Thomas" if i==0 else "Khaterine"
+        var portrait = TextureRect.new()
+        portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+        portrait.texture = Sprites.texture("portrait_"+who.to_lower())
+        portrait.position = Vector2(18+i*232,9)
+        portrait.size = Vector2(36,42)
+        portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+        portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
+        hud.add_child(portrait)
         var name_label = text(who.to_upper(),15)
-        name_label.position = Vector2(24+i*232,13)
+        name_label.position = Vector2(62+i*232,13)
         hud.add_child(name_label)
         names[who] = name_label
         var bar = HealthGauge.new()
-        bar.position = Vector2(24+i*232,38)
-        bar.size = Vector2(198,9)
+        bar.position = Vector2(62+i*232,38)
+        bar.size = Vector2(160,9)
         bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
         bar.tint = Color("b8c3ac" if i==0 else "a397b7")
         hud.add_child(bar)
@@ -175,7 +184,7 @@ func title(has_save: bool):
     button("Nueva partida: Khaterine","start_khaterine",row)
     if has_save:
         button("Continuar partida","continue",content)
-    content.add_child(text("DEMO NARRATIVA  /  0.2     ·     Teclado y ratón",12,"a2aba8"))
+    content.add_child(text("DEMO NARRATIVA  /  0.3     ·     Teclado y ratón",12,"a2aba8"))
     focus_button.grab_focus()
 
 func resume():
@@ -190,7 +199,22 @@ func dialogue(speaker: String,body: String,last: bool):
     overlay.color = Color(0.025,0.045,0.075,0.88)
     content.position.y = 110
     content.add_child(text(speaker.to_upper(),16,"d9bd83"))
-    paragraph(body,20)
+    var row = HBoxContainer.new()
+    row.add_theme_constant_override("separation",20)
+    content.add_child(row)
+    var portrait_id = Sprites.portrait_for(speaker)
+    if not portrait_id.is_empty():
+        var portrait = TextureRect.new()
+        portrait.texture = Sprites.texture(portrait_id)
+        portrait.custom_minimum_size = Vector2(108,120)
+        portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+        portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+        portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
+        row.add_child(portrait)
+    var words = text(body,20)
+    words.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    row.add_child(words)
     focus_button = button("Seguir" if not last else "Volver al sendero","dialogue_next",content)
     focus_button.grab_focus()
 
