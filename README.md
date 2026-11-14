@@ -1,6 +1,6 @@
 # The Light in the Darkness
 
-**Demo narrativa 0.3: personajes ilustrados, Oakhaven y la llegada a Londinium.**
+**Demo narrativa 0.4: carátula, menú principal, personajes ilustrados y llegada a Londinium.**
 
 ![Shalem, Gran Marqués de las Brasas Susurrantes](assets/cinematics/shalem-opening.png)
 
@@ -10,8 +10,8 @@ Godot 4.7.2 estable, GDScript y renderizador Compatibility. Plataforma de esta e
 
 ## Jugar
 
-1. Lee las cuatro páginas de Shalem o salta la apertura con Esc. Enter, Espacio o el botón permiten avanzar y revelar el texto.
-2. Elige Thomas o Khaterine y habla con Elowen junto al huerto usando E.
+1. Al abrir aparece la carátula. Pulsa Enter o haz clic para entrar al menú principal: Continuar, Nueva partida, Opciones, Instrucciones y Créditos. En Windows también aparece Salir del juego.
+2. Elige Nueva partida y después Thomas o Khaterine. Si ya existe un checkpoint, se pide confirmar antes de sustituirlo. Shalem presenta sus cuatro páginas; Enter, Espacio o el botón avanzan y Esc salta al juego. Habla con Elowen junto al huerto usando E.
 3. Avanza hacia la derecha y supera un acechador y una oleada de tres.
 4. Puedes usar el acceso ganado para resolver cuatro parejas de Shalem; es opcional para continuar la historia.
 5. Continúa hacia el bosque y enfrenta el prototipo de Morwenna, con incensario y piras señaladas.
@@ -23,6 +23,10 @@ El resto del Acto II y la Catedral todavía están pendientes de producción.
 Thomas es más rápido y frágil; Khaterine es más lenta, resistente y puede lanzar magia. El personaje que no controlas sigue al protagonista y ayuda en combate. Tab cambia entre los dos.
 
 Nueva partida inicia otro recorrido y sustituye el checkpoint. Continuar partida conserva los objetivos ya completados.
+
+Continuar entra al punto seguro sin repetir el prólogo. Las opciones incluyen volumen general, silenciar y reducir movimiento ambiental; se aplican de inmediato y se guardan en un archivo independiente del progreso. Abrir opciones antes de jugar no crea una partida. Desde la pausa puedes abrir Opciones e Instrucciones y regresar a la pausa con Esc o Volver.
+
+La carátula usa una adaptación de la imagen proporcionada por Kevin: se retiró el subtítulo de dirección de arte. Se conserva el [prompt de edición](assets/menu/prompts.json) y la [imagen final](assets/menu/cover.png). Los créditos distinguen autoría, asistencia de Codex, arte asistido por IA, licencia del motor y audio provisional.
 
 | Control | Acción |
 | --- | --- |

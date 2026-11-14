@@ -2,7 +2,7 @@ import argparse, hashlib, json, shutil, urllib.request, zipfile
 from pathlib import Path
 parser=argparse.ArgumentParser()
 parser.add_argument('--build',type=Path,required=True)
-parser.add_argument('--version',default='0.3')
+parser.add_argument('--version',default='0.4')
 args=parser.parse_args()
 root=Path(__file__).resolve().parents[1]
 build=args.build.resolve()

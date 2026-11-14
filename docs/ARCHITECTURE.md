@@ -89,3 +89,9 @@ La integración de historia comprueba apertura, diario, prototipo de Morwenna, t
 ## Recursos de personajes
 
 `SpriteCatalog` pertenece a presentación: selecciona poses, mantiene una caché de texturas, recorta márgenes alfa y define alturas y pivotes. `ActorView`, `EnemyView`, `CatView` y la interfaz lo consumen. Las imágenes nunca determinan colisiones, daño ni progresión. Las pruebas de integración comprueban transparencia real, selección al desarmar y el anclaje de los pies. Malphas es un recurso futuro; el catálogo no lo añade a la simulación.
+
+## Inicio, navegación y preferencias
+
+`FrontMenu` dibuja carátula, menú, selección de personaje, confirmación, opciones, instrucciones y créditos. Emite acciones y no escribe archivos ni altera la campaña. El controlador de Godot conserva el destino de regreso (menú o pausa) y el personaje pendiente. El prólogo inicia la nueva partida al terminar o saltarlo; el checkpoint anterior permanece intacto mientras se lee. Continuar no reproduce el prólogo. Se confirma la sustitución de una partida existente.
+
+`PreferencesService` vive en aplicación y recibe un repositorio inyectado. Valida valores, limita el volumen y confirma la escritura antes de modificar su estado. El adaptador de guardado se reutiliza con `preferences_v1.json`, separado de `oakhaven_v1.json`; ajustar opciones no habilita Continuar por accidente. Se importan los antiguos ajustes del checkpoint cuando todavía no hay archivo de preferencias. La presentación aplica el volumen al bus Master y sincroniza silencio/movimiento con la campaña activa. El reinicio de campaña conserva las preferencias.

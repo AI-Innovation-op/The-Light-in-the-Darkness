@@ -1,0 +1,6 @@
+{
+  "mode": "built-in image_gen",
+  "reference": "Cover artwork supplied by Kevin",
+  "file": "cover.png",
+  "prompt": "Use case: text-localization / precise-object-edit. Edit the attached game cover for use as the real opening screen of The Light in the Darkness. Make ONLY ONE change: remove the small subtitle line 'DIRECCIÓN DE ARTE • CONCEPTO' below the main title at the top, and fill that small line area with the matching existing dark header background. Keep the large title 'THE LIGHT IN THE DARKNESS' absolutely unchanged, readable and exact. Preserve every other aspect of the supplied artwork: the entire ornate gold border and Celtic corners, tree, medieval village, moon, church, water, Thomas with sword, Khaterine casting magic, black cat Shalem, ash beast, composition, dark slate and gold palette, dimensions/aspect ratio and detailed pixel-art texture. Do not add buttons or any new text, do not crop, do not replace the characters, do not redesign or repaint the scene. Opaque full landscape game cover."
+}

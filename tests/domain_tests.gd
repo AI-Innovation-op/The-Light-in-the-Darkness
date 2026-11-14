@@ -7,6 +7,7 @@ const Session = preload("res://src/application/adventure_session.gd")
 const Progress = preload("res://src/domain/story/chapter_progress.gd")
 const Sequence = preload("res://src/domain/story/narrative_sequence.gd")
 const Story = preload("res://src/application/story_director.gd")
+const Preferences = preload("res://src/application/preferences_service.gd")
 var failures: Array = []
 var count = 0
 
@@ -99,6 +100,19 @@ func _initialize():
     var empty_sequence = Sequence.new()
     check(not empty_sequence.begin("missing",[]) and empty_sequence.current_page().is_empty(),"empty sequence is rejected")
     var repo = Repository.new()
+    var settings_store = FakeRepository.new()
+    var preferences = Preferences.new(settings_store)
+    preferences.load_settings({"muted":true})
+    check(preferences.values.muted and settings_store.data==null,"legacy preferences migrate without writing a campaign or settings file")
+    check(preferences.update("volume",5.0) and preferences.values.volume==1.0,"saved volume is clamped to supported range")
+    var reloaded_settings = Preferences.new(settings_store)
+    reloaded_settings.load_settings()
+    check(reloaded_settings.values.muted and reloaded_settings.values.volume==1.0,"preferences restore independently from campaign progress")
+    var failed_settings = Preferences.new(FailingRepository.new())
+    check(not failed_settings.update("muted",true) and not failed_settings.values.muted,"failed preference write retains the previous runtime value")
+    settings_store.data = {"version":1,"volume":[],"muted":"bad"}
+    preferences.load_settings()
+    check(preferences.values.volume==0.8 and not preferences.values.muted and not preferences.update("volume",[]),"malformed preference types fall back without crashing")
     repo.path = "user://automated_test_save.json"
     check(repo.write(campaign.snapshot()),"filesystem save")
     var second = Campaign.new()

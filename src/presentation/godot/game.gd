@@ -11,6 +11,7 @@ const SoundAdapter = preload("res://src/infrastructure/audio/sound_adapter.gd")
 const NarrativeRepository = preload("res://src/infrastructure/content/narrative_repository.gd")
 const StoryDirector = preload("res://src/application/story_director.gd")
 const LondiniumView = preload("res://src/presentation/godot/londinium_view.gd")
+const PreferencesService = preload("res://src/application/preferences_service.gd")
 
 var session = AdventureSession.new(SaveRepository.new())
 var narrative = NarrativeRepository.new()
@@ -42,6 +43,11 @@ var toast_time = 0.0
 var clock = 0.0
 var started = false
 var has_save = false
+var preferences
+var preferences_storage_path = "user://preferences_v1.json"
+var front_return = "title"
+var pending_identity = "Thomas"
+var opening_starts_game = false
 var audit: Dictionary = {"moves":0,"switches":0,"attacks":0,"dodges":0,"parries":0,"throws":0,"recoveries":0,"kills":0,"dialogues":0,"memory_wins":0}
 
 func _ready():
@@ -87,7 +93,13 @@ func _ready():
     add_child(interface)
     interface.action.connect(on_ui_action)
     has_save = session.load_checkpoint()
-    start_narration("opening")
+    var settings_storage = SaveRepository.new()
+    settings_storage.path = preferences_storage_path
+    preferences = PreferencesService.new(settings_storage)
+    preferences.load_settings(session.state.snapshot())
+    apply_preferences()
+    session.mode = "cover"
+    interface.front_page("cover")
     if OS.has_feature("web") and OS.has_feature("playtest"):
         var diagnostics = Timer.new()
         diagnostics.wait_time = 1.0
@@ -116,6 +128,7 @@ func partner():
 func start_scene(identity: String,continuing: bool=false):
     if not continuing:
         session.start(identity)
+    apply_preferences()
     started = true
     for hero in heroes:
         hero.model.configure(hero.kind)
@@ -144,7 +157,7 @@ func start_scene(identity: String,continuing: bool=false):
         notify("Punto seguro recuperado. Shalem te espera junto al sendero.",5)
     if session.state.current_chapter()==2:
         enter_londinium()
-    session.save()
+    has_save = session.save() or has_save
 
 func clear_combat():
     for enemy in enemies:
@@ -156,6 +169,11 @@ func clear_combat():
 
 func _unhandled_input(event):
     if event is InputEventKey and event.echo:
+        return
+    if session.mode in ["cover","title","characters","options","instructions","credits","confirm_new"]:
+        if event.is_action_pressed("pause_game"):
+            front_back()
+            get_viewport().set_input_as_handled()
         return
     if session.mode in ["opening","interlude"]:
         if event.is_action_pressed("pause_game"):
@@ -431,11 +449,30 @@ func begin_dialogue(lines: Array,after: String):
     interface.dialogue(lines[0][0],lines[0][1],lines.size()==1)
 
 func on_ui_action(id: String):
+    if id.begins_with("volume:") and session.mode=="options":
+        save_preference("volume",float(id.trim_prefix("volume:"))/100.0)
+        return
     if id.begins_with("card_"):
         interface.flip(int(id.trim_prefix("card_")))
         audio.cue("pickup")
         return
     match id:
+        "open_menu": show_main_menu()
+        "new_game":
+            session.mode = "characters"
+            interface.front_page("characters")
+        "open_options","open_instructions","open_credits":
+            front_return = "pause" if session.mode=="pause" else "title"
+            session.mode = {"open_options":"options","open_instructions":"instructions","open_credits":"credits"}[id]
+            interface.front_page(session.mode,preferences.values)
+        "front_back": front_back()
+        "confirm_new": begin_new_game()
+        "cancel_new":
+            session.mode = "characters"
+            interface.front_page("characters")
+        "exit_game":
+            if not OS.has_feature("web"):
+                get_tree().quit()
         "story_next":
             if session.mode not in ["opening","interlude"]:
                 return
@@ -454,11 +491,21 @@ func on_ui_action(id: String):
             if session.state.flags.get("arrived_londinium",false):
                 start_narration("act1_to_act2",true)
         "depart": start_narration("act1_to_act2")
-        "start_thomas": start_scene("Thomas")
-        "start_khaterine": start_scene("Khaterine")
+        "start_thomas","start_khaterine":
+            if session.mode!="characters":
+                return
+            pending_identity = "Thomas" if id=="start_thomas" else "Khaterine"
+            if has_save:
+                session.mode = "confirm_new"
+                interface.front_page("confirm_new",{"identity":pending_identity})
+            else:
+                begin_new_game()
         "continue":
-            session.load_checkpoint()
-            start_scene(session.state.chosen,true)
+            if session.load_checkpoint():
+                start_scene(session.state.chosen,true)
+            else:
+                has_save = false
+                show_main_menu()
         "dialogue_next":
             dialogue_index += 1
             if dialogue_index>=dialogue_lines.size():
@@ -470,23 +517,16 @@ func on_ui_action(id: String):
                 interface.dialogue(dialogue_lines[dialogue_index][0],dialogue_lines[dialogue_index][1],dialogue_index==dialogue_lines.size()-1)
         "resume","memory_exit": resume_world()
         "mute":
-            session.state.muted = not session.state.muted
-            audio.set_muted(session.state.muted)
-            session.save()
-            interface.pause_menu(session.state.muted,session.state.reduced_motion)
+            save_preference("muted",not preferences.values.muted)
         "motion":
-            session.state.reduced_motion = not session.state.reduced_motion
-            session.save()
-            interface.pause_menu(session.state.muted,session.state.reduced_motion)
+            save_preference("reduced_motion",not preferences.values.reduced_motion)
         "restart":
             # Checkpoint progression is retained; health, weapons and encounter reset.
             var identity = session.state.chosen
             start_scene(identity,true)
         "title":
-            session.save()
-            session.mode = "title"
-            interface.title(true)
-            audio.ambience(false)
+            has_save = session.save() or has_save
+            show_main_menu()
         "memory_help": interface.memory_help()
         "memory_win","memory_retry":
             if session.claim_activity():
@@ -500,6 +540,45 @@ func on_ui_action(id: String):
             else:
                 session.mode = "save_error"
                 interface.save_error()
+
+func apply_preferences():
+    session.state.muted = preferences.values.muted
+    session.state.reduced_motion = preferences.values.reduced_motion
+    audio.set_muted(preferences.values.muted)
+    AudioServer.set_bus_mute(0,preferences.values.muted or preferences.values.volume<=0)
+    AudioServer.set_bus_volume_db(0,linear_to_db(maxf(0.0001,preferences.values.volume)))
+
+func save_preference(id: String,value: Variant):
+    var saved = preferences.update(id,value)
+    apply_preferences()
+    if session.mode=="options":
+        interface.front_menu.refresh_options(preferences.values,saved)
+
+func show_main_menu():
+    session.mode = "title"
+    interface.title(has_save)
+    audio.ambience(true)
+
+func begin_new_game():
+    opening_starts_game = true
+    start_narration("opening")
+
+func front_back():
+    match session.mode:
+        "cover": show_main_menu()
+        "title":
+            session.mode = "cover"
+            interface.front_page("cover")
+        "confirm_new":
+            session.mode = "characters"
+            interface.front_page("characters")
+        "characters": show_main_menu()
+        "options","instructions","credits":
+            if front_return=="pause":
+                session.mode = "pause"
+                interface.pause_menu(session.state.muted,session.state.reduced_motion)
+            else:
+                show_main_menu()
 
 func resume_world():
     session.mode = "adventure"
@@ -601,9 +680,11 @@ func finish_narration():
         interface.story_save_error()
         return
     if story.sequence.id=="opening":
-        audio.ambience(false)
-        session.mode = "title"
-        interface.title(has_save)
+        if opening_starts_game:
+            opening_starts_game = false
+            start_scene(pending_identity)
+        else:
+            show_main_menu()
     else:
         enter_londinium()
         resume_world()

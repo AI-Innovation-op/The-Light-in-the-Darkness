@@ -24,7 +24,9 @@ const MemoryBoard = preload("res://src/domain/activities/memory_board.gd")
 const Sprites = preload("res://src/presentation/godot/sprite_catalog.gd")
 var board
 const NarrativeScreen = preload("res://src/presentation/godot/narrative_screen.gd")
+const FrontMenu = preload("res://src/presentation/godot/front_menu.gd")
 var story_screen
+var front_menu
 var region: Label
 var boss_label: Label
 var boss_gauge
@@ -152,8 +154,26 @@ func _ready():
     root.add_child(story_screen)
     story_screen.action.connect(func(id): action.emit(id))
     story_screen.hide()
+    front_menu = FrontMenu.new()
+    root.add_child(front_menu)
+    front_menu.action.connect(func(id): action.emit(id))
+    front_menu.hide()
+
+func front_page(screen: String,data: Dictionary = {}):
+    mode = screen
+    story_screen.hide()
+    overlay.hide()
+    hud.hide()
+    match screen:
+        "cover": front_menu.cover()
+        "title": front_menu.main_menu(data.get("has_save",false))
+        "characters": front_menu.characters()
+        "confirm_new": front_menu.confirm_new(data.identity)
+        "options": front_menu.options(data)
+        "instructions","credits": front_menu.information(screen)
 
 func clear_panel(new_mode: String):
+    front_menu.hide()
     story_screen.hide()
     generation += 1
     mode = new_mode
@@ -171,23 +191,10 @@ func paragraph(value: String,size: int=17):
     content.add_child(label)
 
 func title(has_save: bool):
-    clear_panel("title")
-    overlay.color = Color(0.025,0.045,0.075,0.83)
-    content.add_child(text("UNA HISTORIA DE CENIZA Y ELECCIONES",13,"c3ab79"))
-    content.add_child(text("THE LIGHT\nIN THE DARKNESS",41,"eee4cc"))
-    paragraph("Oakhaven · El sendero de las hogueras",20)
-    paragraph("Dos compañeros. Un poder prestado. Algo se mueve al otro lado del huerto.",16)
-    var row = HBoxContainer.new()
-    row.add_theme_constant_override("separation",16)
-    content.add_child(row)
-    focus_button = button("Nueva partida: Thomas","start_thomas",row)
-    button("Nueva partida: Khaterine","start_khaterine",row)
-    if has_save:
-        button("Continuar partida","continue",content)
-    content.add_child(text("DEMO NARRATIVA  /  0.3     ·     Teclado y ratón",12,"a2aba8"))
-    focus_button.grab_focus()
+    front_page("title",{"has_save":has_save})
 
 func resume():
+    front_menu.hide()
     story_screen.hide()
     mode = "adventure"
     overlay.hide()
@@ -226,8 +233,8 @@ func pause_menu(muted: bool,reduced: bool):
     paragraph("Tab: cambiar personaje · Q: lanzar arma · E: hablar o recuperar arma\nJ: ataque ligero · K: ataque fuerte · L: bloquear · Espacio: esquivar",16)
     focus_button = button("Continuar","resume",content)
     button("Diario · Historia de Albion","journal",content)
-    button("Sonido: " + ("silenciado" if muted else "activado"),"mute",content)
-    button("Movimiento ambiental: " + ("reducido" if reduced else "activado"),"motion",content)
+    button("Opciones","open_options",content)
+    button("Instrucciones","open_instructions",content)
     button("Reiniciar encuentro","restart",content)
     button("Volver al inicio","title",content)
     focus_button.grab_focus()
@@ -311,6 +318,7 @@ func end_panel(won: bool):
     focus_button.grab_focus()
 
 func story_page(page: Dictionary,index: int,total: int,opening: bool,reduced: bool):
+    front_menu.hide()
     mode = "opening" if opening else "interlude"
     overlay.hide()
     hud.hide()
